@@ -1,10 +1,10 @@
 module.exports = {
     head1: {
         // padding:80,
-        fontSize: 100,
+        fontSize: 30,
         color: 'black',
         textAlign:'auto',
-        fontWeight: '500',
+        fontWeight: '50',
     },
     head2: {
         fontSize: 20,

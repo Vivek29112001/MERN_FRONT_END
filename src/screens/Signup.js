@@ -7,59 +7,61 @@ import { errormessage, formgroup, head1, head2, input, input1, label, link, link
 
 const Signup = ({
     navigation
-}) => { 
+}) => {
 
     const [fdata, setFdata] = useState({
-        name:'',
-        email:'',
-        password:'',
-        cpassword:'',
-        dob:'',
-        address:'',
+        name: '',
+        email: '',
+        password: '',
+        cpassword: '',
+        dob: '',
+        address: '',
     })
+
     const [errormsg, setErrormsg] = useState(null);
 
-    const Sendtobackend = () =>{
+    const Sendtobackend = () => {
         // console.log(fdata);
-        if(fdata.name ==''||
-            fdata.address =='' ||
+        if (fdata.name == '' ||
             fdata.email == '' ||
-            fdata.password == ''||
+            fdata.password == '' ||
             fdata.cpassword == '' ||
-            fdata.dob == '' ) {
-                setErrormsg("all fields are required");
+            fdata.dob == '' ||
+            fdata.address == '') {
+            setErrormsg('All fields are required');
+            return;
+        }
+        else {
+            if (fdata.password != fdata.cpassword) {
+                setErrormsg('Password and Confirm Password must be same');
                 return;
             }
-            else{
-                if(fdata.password != fdata.cpassword){
-                    setErrormsg(' Password and Confirm Password must be same');
-                    return ;
-                }
-                else{
-                    fetch('http://192.168.161.95:3000/signup', {
-                        method : 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(fdata)
-                    })
-                    
-                     .then(res => res.json()).then(
+            else {
+                fetch('http://192.168.161.95:3000/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(fdata)
+                })
+                    .then(res => res.json()).then(
                         data => {
                             // console.log(data);
-                            if (data.error){
-                                setErrormsg(data.error);
+                            if (data.error === 'Invalid Credentials') {
+                                // alert('Invalid Credentials')
+                                setErrormsg('Invalid Credentials')
                             }
-                            else{
-                                alert('account created successfully');
-                                navigation.navigate('login');
+                            else if (data.message === "Verification Code Sent to your Email") {
+                                console.log(data.udata);
+                                alert(data.message);
+                                navigation.navigate('verification', { userdata: data.udata })
                             }
                         }
-                     )
-                }
+                    )
             }
-    }
+        }
 
+    }
     return (
         <View style={styles.container}>
             <Image style={styles.patternbg} source={pattern} />
